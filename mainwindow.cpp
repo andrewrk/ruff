@@ -5,6 +5,7 @@
 #include <QtDebug>
 #include <QTableWidgetItem>
 
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -22,7 +23,7 @@ MainWindow::~MainWindow()
 void MainWindow::refreshDataModel()
 {
     QString dataSourceFile = "/home/andy/Downloads/jobs-example.csv";
-    QList<QStringList> csv = CSV::parseFromFile(dataSourceFile);
+    csv = CSV::parseFromFile(dataSourceFile);
     if (csv.length() < 2) {
         showError(QString("Invalid CSV file (expected >= 2 rows): %1").arg(dataSourceFile));
         return;
@@ -36,12 +37,13 @@ void MainWindow::refreshDataModel()
     }
 
     ui->tableWidget->setSortingEnabled(false);
+    ui->tableWidget->clear();
     ui->tableWidget->setColumnCount(headers.size());
-    ui->tableWidget->setRowCount(csv.size());
+    ui->tableWidget->setRowCount(csv.size() - 1);
     ui->tableWidget->setHorizontalHeaderLabels(headers);
 
-    for (int row = 0; row < csv.size(); row += 1) {
-        QStringList rowStringList = csv.at(row);
+    for (int row = 0; row < csv.size() - 1; row += 1) {
+        QStringList rowStringList = csv.at(row + 1);
         for (int col = 0; col < rowStringList.size() && col < headers.size(); col += 1) {
             QString value = rowStringList.at(col);
             QTableWidgetItem *item = new QTableWidgetItem(value);
@@ -52,6 +54,32 @@ void MainWindow::refreshDataModel()
     ui->tableWidget->sortItems(0);
     ui->tableWidget->setSortingEnabled(true);
     showError("");
+    filterSearch();
+}
+
+void MainWindow::filterSearch()
+{
+    QStringList terms = ui->searchBox->text().split(" ", QString::SkipEmptyParts);
+
+    for (int row = 0; row < ui->tableWidget->rowCount(); row += 1) {
+        bool hide = true;
+        for (int col = 0; col < ui->tableWidget->columnCount(); col += 1) {
+            QTableWidgetItem *item = ui->tableWidget->item(row, col);
+            QString value = item->text();
+            bool match = true;
+            foreach (QString term, terms) {
+                if (value.indexOf(term, 0, Qt::CaseInsensitive) == -1) {
+                    match = false;
+                    break;
+                }
+            }
+            if (match) {
+                hide = false;
+                break;
+            }
+        }
+        ui->tableWidget->setRowHidden(row, hide);
+    }
 }
 
 void MainWindow::showError(QString err)
@@ -68,4 +96,9 @@ void MainWindow::on_actionFocusFind_triggered()
 {
     ui->searchBox->selectAll();
     ui->searchBox->setFocus();
+}
+
+void MainWindow::on_searchBox_textEdited(const QString &arg1)
+{
+    filterSearch();
 }

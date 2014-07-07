@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QStringList>
+#include <QList>
 
 namespace Ui {
 class MainWindow;
@@ -17,12 +19,16 @@ public:
 
 private slots:
     void on_actionFocusFind_triggered();
+    void on_searchBox_textEdited(const QString &arg1);
 
 private:
     Ui::MainWindow *ui;
 
     void refreshDataModel();
+    void filterSearch();
     void showError(QString err);
+
+    QList<QStringList> csv;
 };
 
 #endif // MAINWINDOW_H
