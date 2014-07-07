@@ -88,7 +88,7 @@
      <item row="3" column="0">
       <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>Co&amp;mmand when &lt;enter&gt; pressed:</string>
+        <string>&amp;Open Command:</string>
        </property>
        <property name="buddy">
         <cstring>commandText</cstring>

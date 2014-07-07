@@ -123,7 +123,7 @@
          <string>(Enter Key)</string>
         </property>
         <property name="text">
-         <string>&amp;Open Folder</string>
+         <string>&amp;Open</string>
         </property>
        </widget>
       </item>
