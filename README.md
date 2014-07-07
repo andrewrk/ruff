@@ -7,6 +7,9 @@ to run for a row.
 
 ruff is cross platform. No Operating System Left Behind.
 
+![](http://superjoe.s3.amazonaws.com/temp/ruff-1.png)
+![](http://superjoe.s3.amazonaws.com/temp/ruff-2.png)
+
 ## How To Enter a Command
 
 When you load a .csv file, the first row is used as the headers. Each header
