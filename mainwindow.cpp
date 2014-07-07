@@ -13,6 +13,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->menuBar->hide();
     refreshDataModel();
+
+    settingsDialog = new SettingsDialog(this);
 }
 
 MainWindow::~MainWindow()
@@ -82,6 +84,11 @@ void MainWindow::filterSearch()
     }
 }
 
+void MainWindow::showSettings()
+{
+    settingsDialog->show();
+}
+
 void MainWindow::showError(QString err)
 {
     if (err.isEmpty() || err.isNull()) {
@@ -98,7 +105,27 @@ void MainWindow::on_actionFocusFind_triggered()
     ui->searchBox->setFocus();
 }
 
-void MainWindow::on_searchBox_textEdited(const QString &arg1)
+void MainWindow::on_actionClose_triggered()
+{
+    this->close();
+}
+
+void MainWindow::on_closeButton_clicked()
+{
+    this->close();
+}
+
+void MainWindow::on_searchBox_textChanged(const QString &arg1)
 {
     filterSearch();
+}
+
+void MainWindow::on_settingsButton_clicked()
+{
+    showSettings();
+}
+
+void MainWindow::on_actionSettings_triggered()
+{
+    showSettings();
 }
