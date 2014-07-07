@@ -17,6 +17,9 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+    void refreshDataModel();
+    void showError(QString err);
 };
 
 #endif // MAINWINDOW_H
