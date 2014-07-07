@@ -4,7 +4,9 @@
 
 #include <QtDebug>
 #include <QTableWidgetItem>
-
+#include <QDir>
+#include <QApplication>
+#include <QKeySequence>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -12,9 +14,16 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->menuBar->hide();
-    refreshDataModel();
 
     settingsDialog = new SettingsDialog(this);
+
+    connect(settingsDialog, SIGNAL(accepted()), this, SLOT(acceptNewSettings()));
+
+    QString settingsFilePath = QDir(QApplication::applicationDirPath()).relativeFilePath("ruff.ini");
+    settings = new QSettings(settingsFilePath, QSettings::IniFormat, this);
+
+    loadSettings();
+    refreshDataModel();
 }
 
 MainWindow::~MainWindow()
@@ -24,7 +33,12 @@ MainWindow::~MainWindow()
 
 void MainWindow::refreshDataModel()
 {
-    QString dataSourceFile = "/home/andy/Downloads/jobs-example.csv";
+    QString dataSourceFile = settingsDialog->getDataSource();
+    if (dataSourceFile.isNull() || dataSourceFile.isEmpty()) {
+        showError("Select your data source in the settings dialog.");
+        return;
+    }
+
     csv = CSV::parseFromFile(dataSourceFile);
     if (csv.length() < 2) {
         showError(QString("Invalid CSV file (expected >= 2 rows): %1").arg(dataSourceFile));
@@ -67,6 +81,7 @@ void MainWindow::filterSearch()
         bool hide = true;
         for (int col = 0; col < ui->tableWidget->columnCount(); col += 1) {
             QTableWidgetItem *item = ui->tableWidget->item(row, col);
+            if (!item) continue;
             QString value = item->text();
             bool match = true;
             foreach (QString term, terms) {
@@ -87,6 +102,7 @@ void MainWindow::filterSearch()
 void MainWindow::showSettings()
 {
     settingsDialog->show();
+
 }
 
 void MainWindow::showError(QString err)
@@ -97,6 +113,20 @@ void MainWindow::showError(QString err)
         ui->errorLabel->setText(err);
         ui->errorLabel->show();
     }
+}
+
+void MainWindow::loadSettings()
+{
+    QString dataSource = settings->value("dataSource", "").toString();
+    bool closeBehavior = settings->value("closeBehavior", true).toBool();
+    QKeySequence showHotKey = QKeySequence::fromString(settings->value("showHotKey", "Ctrl+Alt+R").toString());
+    QString enterCommand = settings->value("enterCommand", "").toString();
+
+    settingsDialog->setDataSource(dataSource);
+    settingsDialog->setCloseBehavior(closeBehavior);
+    settingsDialog->setShowHotKey(showHotKey);
+    settingsDialog->setEnterCommand(enterCommand);
+
 }
 
 void MainWindow::on_actionFocusFind_triggered()
@@ -115,7 +145,7 @@ void MainWindow::on_closeButton_clicked()
     this->close();
 }
 
-void MainWindow::on_searchBox_textChanged(const QString &arg1)
+void MainWindow::on_searchBox_textChanged(const QString &)
 {
     filterSearch();
 }
@@ -128,4 +158,18 @@ void MainWindow::on_settingsButton_clicked()
 void MainWindow::on_actionSettings_triggered()
 {
     showSettings();
+}
+
+void MainWindow::acceptNewSettings()
+{
+
+    settings->setValue("dataSource", settingsDialog->getDataSource());
+    settings->setValue("closeBehavior", settingsDialog->getCloseBehavior());
+    settings->setValue("showHotKey", settingsDialog->getShowHotKey());
+    settings->setValue("enterCommand", settingsDialog->getEnterCommand());
+
+    settings->sync();
+
+    refreshDataModel();
+
 }

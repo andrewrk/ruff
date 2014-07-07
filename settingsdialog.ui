@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>576</width>
-    <height>189</height>
+    <width>673</width>
+    <height>200</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,10 +22,13 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QFormLayout" name="formLayout">
+     <property name="labelAlignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
      <item row="0" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>&amp;Data Source (.csv file):</string>
+        <string>&amp;Data source (.csv file):</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -35,21 +38,11 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>C&amp;lose Behavior:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-       <property name="buddy">
-        <cstring>closeBehaviorBox</cstring>
-       </property>
-      </widget>
-     </item>
      <item row="1" column="1">
       <widget class="QComboBox" name="closeBehaviorBox">
+       <property name="focusPolicy">
+        <enum>Qt::StrongFocus</enum>
+       </property>
        <item>
         <property name="text">
          <string>Actually Close</string>
@@ -77,9 +70,9 @@
       </layout>
      </item>
      <item row="2" column="0">
-      <widget class="QLabel" name="label_3">
+      <widget class="QLabel" name="hotKeyLabel">
        <property name="text">
-        <string>Hot &amp;Key:</string>
+        <string>Hot &amp;key to show this app:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -92,6 +85,32 @@
      <item row="2" column="1">
       <widget class="QKeySequenceEdit" name="hotKeyBox"/>
      </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Co&amp;mmand when &lt;enter&gt; pressed:</string>
+       </property>
+       <property name="buddy">
+        <cstring>commandText</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="commandText"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>C&amp;lose behavior:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
+        <cstring>closeBehaviorBox</cstring>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
@@ -100,7 +119,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>

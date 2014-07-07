@@ -6,6 +6,7 @@
 #include <QMainWindow>
 #include <QStringList>
 #include <QList>
+#include <QSettings>
 
 namespace Ui {
 class MainWindow;
@@ -32,6 +33,8 @@ private slots:
 
     void on_actionSettings_triggered();
 
+    void acceptNewSettings();
+
 private:
     Ui::MainWindow *ui;
 
@@ -39,8 +42,11 @@ private:
     void filterSearch();
     void showSettings();
     void showError(QString err);
+    void loadSettings();
 
     SettingsDialog *settingsDialog;
+
+    QSettings *settings;
 
     QList<QStringList> csv;
 };
