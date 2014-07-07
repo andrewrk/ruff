@@ -22,12 +22,14 @@ Name,PC,Number,Address
 
 Then you have these variables available to you in your command:
 
- * `$(Name)`
- * `$(PC)`
- * `$(Number)`
- * `$(Address)`
+ * `${Name}`
+ * `${PC}`
+ * `${Number}`
+ * `${Address}`
 
 If you have a folder for each item on your computer and you want the command to
 open the folder to it, it might look something like this:
 
-`explorer C:\Some\Folder\$(Number)`
+`explorer C:\Some\Folder\${Number}`
+
+If you need to enter a literal `$`, use 2 of them like this: `$$`.
