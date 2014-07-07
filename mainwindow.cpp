@@ -23,12 +23,18 @@ void MainWindow::refreshDataModel()
     QString dataSourceFile = "/home/andy/Downloads/jobs-example.csv";
     QList<QStringList> csv = CSV::parseFromFile(dataSourceFile);
     if (csv.length() < 2) {
-        showError(QString("Invalid CSV file: %1").arg(dataSourceFile));
+        showError(QString("Invalid CSV file (expected >= 2 rows): %1").arg(dataSourceFile));
         return;
     }
 
     // first row is headers
     QStringList headers = csv.at(0);
+    if (headers.size() < 1) {
+        showError(QString("Invalid CSV file (expected >= 1 column): %1").arg(dataSourceFile));
+        return;
+    }
+
+    ui->tableWidget->setSortingEnabled(false);
     ui->tableWidget->setColumnCount(headers.size());
     ui->tableWidget->setRowCount(csv.size());
     ui->tableWidget->setHorizontalHeaderLabels(headers);
@@ -42,6 +48,8 @@ void MainWindow::refreshDataModel()
         }
     }
 
+    ui->tableWidget->sortItems(0);
+    ui->tableWidget->setSortingEnabled(true);
     showError("");
 }
 
