@@ -34,6 +34,9 @@
       <property name="editTriggers">
        <set>QAbstractItemView::NoEditTriggers</set>
       </property>
+      <property name="tabKeyNavigation">
+       <bool>false</bool>
+      </property>
       <property name="alternatingRowColors">
        <bool>true</bool>
       </property>
@@ -135,6 +138,31 @@
     </item>
    </layout>
   </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>871</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuRuff">
+    <property name="title">
+     <string>&amp;Ruff</string>
+    </property>
+    <addaction name="actionFocusFind"/>
+   </widget>
+   <addaction name="menuRuff"/>
+  </widget>
+  <action name="actionFocusFind">
+   <property name="text">
+    <string>Focus Find Box</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>

@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->menuBar->hide();
     refreshDataModel();
 }
 
@@ -61,4 +62,10 @@ void MainWindow::showError(QString err)
         ui->errorLabel->setText(err);
         ui->errorLabel->show();
     }
+}
+
+void MainWindow::on_actionFocusFind_triggered()
+{
+    ui->searchBox->selectAll();
+    ui->searchBox->setFocus();
 }
