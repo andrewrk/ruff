@@ -89,7 +89,14 @@ void MainWindow::refreshDataModel()
 
 void MainWindow::refreshTrayVisibility()
 {
-    trayIcon->setVisible(!settingsDialog->getCloseBehavior());
+    if (settingsDialog->getCloseBehavior()) {
+        trayIcon->hide();
+    } else {
+        trayIcon->show();
+        trayIcon->hide();
+        qApp->processEvents();
+        trayIcon->show();
+    }
 }
 
 void MainWindow::filterSearch()
