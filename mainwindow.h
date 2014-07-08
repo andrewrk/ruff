@@ -10,6 +10,7 @@
 #include <QCloseEvent>
 #include <QProcess>
 #include <QTableWidgetItem>
+#include <QSystemTrayIcon>
 
 namespace Ui {
 class MainWindow;
@@ -25,8 +26,6 @@ public:
 
 private slots:
     void on_actionFocusFind_triggered();
-
-    void on_actionClose_triggered();
 
     void on_closeButton_clicked();
 
@@ -45,6 +44,9 @@ private slots:
     void displayProcessError(QProcess::ProcessError error);
 
     void handleProcessFinished(int, QProcess::ExitStatus exitStatus);
+    void handleTrayIconActivated(QSystemTrayIcon::ActivationReason reason);
+
+    void on_actionExit_triggered();
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -53,6 +55,7 @@ private:
     Ui::MainWindow *ui;
 
     void refreshDataModel();
+    void refreshTrayVisibility();
     void filterSearch();
     void showSettings();
     void showError(QString err);
@@ -64,6 +67,9 @@ private:
     QSettings *settings;
 
     QList<QStringList> csv;
+
+    QSystemTrayIcon *trayIcon;
+    bool disableIgnoreClose;
 };
 
 #endif // MAINWINDOW_H

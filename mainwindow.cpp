@@ -19,6 +19,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->menuBar->hide();
 
+    disableIgnoreClose = false;
+
+    trayIcon = new QSystemTrayIcon(this->windowIcon(), this);
+    trayIcon->setContextMenu(ui->menuRuff);
+    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(handleTrayIconActivated(QSystemTrayIcon::ActivationReason)));
+
     settingsDialog = new SettingsDialog(this);
 
     connect(settingsDialog, SIGNAL(accepted()), this, SLOT(acceptNewSettings()));
@@ -29,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
     loadSettings();
     restoreGeometry(settings->value("windowGeometry").toByteArray());
     restoreState(settings->value("windowState").toByteArray());
+    refreshTrayVisibility();
     refreshDataModel();
     ui->tableWidget->horizontalHeader()->restoreState(settings->value("tableState").toByteArray());
 }
@@ -78,6 +85,11 @@ void MainWindow::refreshDataModel()
     ui->tableWidget->setSortingEnabled(true);
     showError("");
     filterSearch();
+}
+
+void MainWindow::refreshTrayVisibility()
+{
+    trayIcon->setVisible(!settingsDialog->getCloseBehavior());
 }
 
 void MainWindow::filterSearch()
@@ -134,7 +146,6 @@ void MainWindow::loadSettings()
     settingsDialog->setCloseBehavior(closeBehavior);
     settingsDialog->setShowHotKey(showHotKey);
     settingsDialog->setEnterCommand(enterCommand);
-
 }
 
 void MainWindow::openSelectedItem()
@@ -172,13 +183,9 @@ void MainWindow::openSelectedItem()
 
 void MainWindow::on_actionFocusFind_triggered()
 {
+    this->show();
     ui->searchBox->selectAll();
     ui->searchBox->setFocus();
-}
-
-void MainWindow::on_actionClose_triggered()
-{
-    this->close();
 }
 
 void MainWindow::on_closeButton_clicked()
@@ -211,8 +218,8 @@ void MainWindow::acceptNewSettings()
 
     settings->sync();
 
+    refreshTrayVisibility();
     refreshDataModel();
-
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -220,7 +227,13 @@ void MainWindow::closeEvent(QCloseEvent *event)
     settings->setValue("windowGeometry", saveGeometry());
     settings->setValue("windowState", saveState());
     settings->setValue("tableState", ui->tableWidget->horizontalHeader()->saveState());
-    QMainWindow::closeEvent(event);
+
+    if (disableIgnoreClose || settingsDialog->getCloseBehavior()) {
+        event->accept();
+    } else {
+        event->ignore();
+        this->hide();
+    }
 }
 
 void MainWindow::on_openButton_clicked()
@@ -270,4 +283,17 @@ void MainWindow::handleProcessFinished(int, QProcess::ExitStatus exitStatus)
         QString cmd = process->property("cmd").toString();
         showError(QString("Error executing %1: process crashed").arg(cmd));
     }
+}
+
+void MainWindow::handleTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
+{
+    if (reason == QSystemTrayIcon::Trigger) {
+        this->setVisible(!this->isVisible());
+    }
+}
+
+void MainWindow::on_actionExit_triggered()
+{
+    disableIgnoreClose = true;
+    this->close();
 }
