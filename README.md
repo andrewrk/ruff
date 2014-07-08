@@ -53,3 +53,5 @@ open the folder to it, it might look something like this:
 `explorer C:\Some\Folder\${Number}`
 
 If you need to enter a literal `$`, use 2 of them like this: `$$`.
+
+Inside the `${}`, `$` are already literal. Use `}}` if you need a literal `}`.

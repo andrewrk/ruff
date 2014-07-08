@@ -1,12 +1,12 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "csv.h"
+#include "commandparser.h"
 
 #include <QtDebug>
 #include <QDir>
 #include <QApplication>
 #include <QKeySequence>
-#include <QTextStream>
 
 enum UserRoles {
     ExecCommand = Qt::UserRole + 1
@@ -118,6 +118,7 @@ void MainWindow::showError(QString err)
         ui->errorLabel->hide();
     } else {
         ui->errorLabel->setText(err);
+        ui->errorLabel->setToolTip(err);
         ui->errorLabel->show();
     }
 }
@@ -136,38 +137,37 @@ void MainWindow::loadSettings()
 
 }
 
-static void parseCommand(QString sourceCommand, QString &exe, QStringList &args)
-{
-    /*
-    QTextStream bufStream;
-    enum State {Normal, Quote} state = Normal;
-    bool isProgram = true;
-    QChar quoteType;
-    for (int i = 0; i < sourceCommand.size(); i += 1) {
-        QChar c = sourceCommand.at(i);
-        switch (state) {
-        case Normal:
-            break;
-        case Quote:
-            break;
-        }
-    }*/
-    args = sourceCommand.split(" ", QString::SkipEmptyParts);
-    exe = args.takeFirst();
-}
-
 void MainWindow::openSelectedItem()
 {
     QString sourceCommand = settingsDialog->getEnterCommand();
 
-    QString exe;
-    QStringList args;
-    parseCommand(sourceCommand, exe, args);
+    if (sourceCommand.isNull() || sourceCommand.isEmpty()) {
+        showError("Specify a command to run in the Settings dialog.");
+        return;
+    }
 
-    QProcess *process = new QProcess(this);
-    process->setProperty("cmd", sourceCommand);
-    process->startDetached(exe, args);
-    connect(process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(displayProcessError(QProcess::ProcessError)));
+    int currentRow = ui->tableWidget->currentRow();
+    if (currentRow < 0) {
+        showError("No row selected.");
+        return;
+    }
+
+    QHash<QString, QString> context;
+    for (int col = 0; col < ui->tableWidget->columnCount(); col += 1) {
+        QString colName = ui->tableWidget->horizontalHeaderItem(col)->text();
+        context.insert(colName, ui->tableWidget->item(currentRow, col)->text());
+    }
+    CommandParser parser(sourceCommand, context);
+
+    if (parser.error.isNull()) {
+        QProcess *process = new QProcess(this);
+        process->setProperty("cmd", QString("%1 %2").arg(parser.exe, parser.args.join(" ")));
+        process->startDetached(parser.exe, parser.args);
+        connect(process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(displayProcessError(QProcess::ProcessError)));
+        connect(process, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(handleProcessFinished(int,QProcess::ExitStatus)));
+    } else {
+        showError(parser.error);
+    }
 }
 
 void MainWindow::on_actionFocusFind_triggered()
@@ -259,4 +259,15 @@ void MainWindow::displayProcessError(QProcess::ProcessError error)
     QProcess *process = dynamic_cast<QProcess*>(QObject::sender());
     QString cmd = process->property("cmd").toString();
     showError(QString("Error executing %1: %2").arg(cmd, errDesc));
+}
+
+void MainWindow::handleProcessFinished(int, QProcess::ExitStatus exitStatus)
+{
+    if (exitStatus == QProcess::NormalExit) {
+        showError("");
+    } else {
+        QProcess *process = dynamic_cast<QProcess*>(QObject::sender());
+        QString cmd = process->property("cmd").toString();
+        showError(QString("Error executing %1: process crashed").arg(cmd));
+    }
 }

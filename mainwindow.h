@@ -44,6 +44,8 @@ private slots:
 
     void displayProcessError(QProcess::ProcessError error);
 
+    void handleProcessFinished(int, QProcess::ExitStatus exitStatus);
+
 protected:
     void closeEvent(QCloseEvent *event);
 

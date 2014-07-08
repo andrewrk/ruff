@@ -15,11 +15,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     settingsdialog.cpp \
-    csv.cpp
+    csv.cpp \
+    commandparser.cpp
 
 HEADERS  += mainwindow.h \
     settingsdialog.h \
-    csv.h
+    csv.h \
+    commandparser.h
 
 FORMS    += mainwindow.ui \
     settingsdialog.ui
