@@ -10,6 +10,12 @@ ruff is cross platform. No Operating System Left Behind.
 ![](http://superjoe.s3.amazonaws.com/temp/ruff-1.png)
 ![](http://superjoe.s3.amazonaws.com/temp/ruff-2.png)
 
+## Install
+
+### Windows
+
+[ruff-0.0.1.exe](http://superjoe.s3.amazonaws.com/temp/ruff-0.0.1.exe)
+
 ## How To Enter a Command
 
 ### Format
