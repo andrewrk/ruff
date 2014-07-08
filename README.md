@@ -73,4 +73,6 @@ make qt5
 mkdir build-win
 /path/to/mxe/usr/i686-pc-mingw32/qt5/bin/qmake /path/to/ruff/ruff.pro
 make
+/path/to/mxe/usr/i686-pc-mingw32/bin/strip release/ruff.exe
+upx release/ruff.exe
 ```
