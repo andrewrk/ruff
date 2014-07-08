@@ -8,7 +8,6 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     ui(new Ui::SettingsDialog)
 {
     ui->setupUi(this);
-    updateEnableDisable();
 }
 
 SettingsDialog::~SettingsDialog()
@@ -24,18 +23,6 @@ void SettingsDialog::on_sourceFileButton_clicked()
     ui->sourceFileText->setText(filename);
 }
 
-void SettingsDialog::on_closeBehaviorBox_currentIndexChanged(int)
-{
-    updateEnableDisable();
-}
-
-void SettingsDialog::updateEnableDisable()
-{
-    bool hotKeyEnabled = ui->closeBehaviorBox->currentIndex() == 1;
-    ui->hotKeyLabel->setEnabled(hotKeyEnabled);
-    ui->hotKeyBox->setEnabled(hotKeyEnabled);
-}
-
 void SettingsDialog::setDataSource(QString value)
 {
     ui->sourceFileText->setText(value);
@@ -49,7 +36,6 @@ QString SettingsDialog::getDataSource()
 void SettingsDialog::setCloseBehavior(bool value)
 {
     ui->closeBehaviorBox->setCurrentIndex(value ? 0 : 1);
-    updateEnableDisable();
 }
 
 bool SettingsDialog::getCloseBehavior()
@@ -59,12 +45,12 @@ bool SettingsDialog::getCloseBehavior()
 
 void SettingsDialog::setShowHotKey(QKeySequence seq)
 {
-    ui->hotKeyBox->setKeySequence(seq);
+
 }
 
 QKeySequence SettingsDialog::getShowHotKey()
 {
-    return ui->hotKeyBox->keySequence();
+    return QKeySequence();
 }
 
 void SettingsDialog::setEnterCommand(QString value)

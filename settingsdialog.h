@@ -32,10 +32,7 @@ public:
 private slots:
     void on_sourceFileButton_clicked();
 
-    void on_closeBehaviorBox_currentIndexChanged(int index);
-
 private:
-    void updateEnableDisable();
 
     Ui::SettingsDialog *ui;
 };

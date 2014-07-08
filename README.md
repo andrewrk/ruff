@@ -55,3 +55,16 @@ open the folder to it, it might look something like this:
 If you need to enter a literal `$`, use 2 of them like this: `$$`.
 
 Inside the `${}`, `$` are already literal. Use `}}` if you need a literal `}`.
+
+## Compiling for Windows
+
+Use [mxe](http://mxe.cc/).
+
+```
+git clone https://github.com/mxe/mxe.git
+cd mxe
+make qt5
+mkdir build-win
+/path/to/mxe/usr/i686-pc-mingw32/qt5/bin/qmake /path/to/ruff/ruff.pro
+make
+```
