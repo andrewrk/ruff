@@ -7,6 +7,7 @@
 #include <QStringList>
 #include <QList>
 #include <QSettings>
+#include <QCloseEvent>
 
 namespace Ui {
 class MainWindow;
@@ -34,6 +35,9 @@ private slots:
     void on_actionSettings_triggered();
 
     void acceptNewSettings();
+
+protected:
+    void closeEvent(QCloseEvent *event);
 
 private:
     Ui::MainWindow *ui;

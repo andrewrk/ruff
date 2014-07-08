@@ -23,6 +23,8 @@ MainWindow::MainWindow(QWidget *parent) :
     settings = new QSettings(settingsFilePath, QSettings::IniFormat, this);
 
     loadSettings();
+    restoreGeometry(settings->value("windowGeometry").toByteArray());
+    restoreState(settings->value("windowState").toByteArray());
     refreshDataModel();
 }
 
@@ -172,4 +174,11 @@ void MainWindow::acceptNewSettings()
 
     refreshDataModel();
 
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    settings->setValue("windowGeometry", saveGeometry());
+    settings->setValue("windowState", saveState());
+    QMainWindow::closeEvent(event);
 }
