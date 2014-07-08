@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
     restoreGeometry(settings->value("windowGeometry").toByteArray());
     restoreState(settings->value("windowState").toByteArray());
     refreshDataModel();
+    ui->tableWidget->horizontalHeader()->restoreState(settings->value("tableState").toByteArray());
 }
 
 MainWindow::~MainWindow()
@@ -180,5 +181,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     settings->setValue("windowGeometry", saveGeometry());
     settings->setValue("windowState", saveState());
+    settings->setValue("tableState", ui->tableWidget->horizontalHeader()->saveState());
     QMainWindow::closeEvent(event);
 }
