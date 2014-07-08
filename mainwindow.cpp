@@ -3,10 +3,14 @@
 #include "csv.h"
 
 #include <QtDebug>
-#include <QTableWidgetItem>
 #include <QDir>
 #include <QApplication>
 #include <QKeySequence>
+#include <QTextStream>
+
+enum UserRoles {
+    ExecCommand = Qt::UserRole + 1
+};
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -132,6 +136,40 @@ void MainWindow::loadSettings()
 
 }
 
+static void parseCommand(QString sourceCommand, QString &exe, QStringList &args)
+{
+    /*
+    QTextStream bufStream;
+    enum State {Normal, Quote} state = Normal;
+    bool isProgram = true;
+    QChar quoteType;
+    for (int i = 0; i < sourceCommand.size(); i += 1) {
+        QChar c = sourceCommand.at(i);
+        switch (state) {
+        case Normal:
+            break;
+        case Quote:
+            break;
+        }
+    }*/
+    args = sourceCommand.split(" ", QString::SkipEmptyParts);
+    exe = args.takeFirst();
+}
+
+void MainWindow::openSelectedItem()
+{
+    QString sourceCommand = settingsDialog->getEnterCommand();
+
+    QString exe;
+    QStringList args;
+    parseCommand(sourceCommand, exe, args);
+
+    QProcess *process = new QProcess(this);
+    process->setProperty("cmd", sourceCommand);
+    process->startDetached(exe, args);
+    connect(process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(displayProcessError(QProcess::ProcessError)));
+}
+
 void MainWindow::on_actionFocusFind_triggered()
 {
     ui->searchBox->selectAll();
@@ -183,4 +221,42 @@ void MainWindow::closeEvent(QCloseEvent *event)
     settings->setValue("windowState", saveState());
     settings->setValue("tableState", ui->tableWidget->horizontalHeader()->saveState());
     QMainWindow::closeEvent(event);
+}
+
+void MainWindow::on_openButton_clicked()
+{
+    openSelectedItem();
+}
+
+void MainWindow::on_tableWidget_itemDoubleClicked(QTableWidgetItem *)
+{
+    openSelectedItem();
+}
+
+void MainWindow::displayProcessError(QProcess::ProcessError error)
+{
+    QString errDesc;
+    switch (error) {
+    case QProcess::FailedToStart:
+        errDesc = "file not found or permissions problem";
+        break;
+    case QProcess::Crashed:
+        errDesc = "crashed";
+        break;
+    case QProcess::Timedout:
+        errDesc = "timed out";
+        break;
+    case QProcess::WriteError:
+        errDesc = "write problem";
+        break;
+    case QProcess::ReadError:
+        errDesc = "read problem";
+        break;
+    default:
+        errDesc = "unknown";
+        break;
+    }
+    QProcess *process = dynamic_cast<QProcess*>(QObject::sender());
+    QString cmd = process->property("cmd").toString();
+    showError(QString("Error executing %1: %2").arg(cmd, errDesc));
 }

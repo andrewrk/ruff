@@ -8,6 +8,8 @@
 #include <QList>
 #include <QSettings>
 #include <QCloseEvent>
+#include <QProcess>
+#include <QTableWidgetItem>
 
 namespace Ui {
 class MainWindow;
@@ -36,6 +38,12 @@ private slots:
 
     void acceptNewSettings();
 
+    void on_openButton_clicked();
+
+    void on_tableWidget_itemDoubleClicked(QTableWidgetItem *);
+
+    void displayProcessError(QProcess::ProcessError error);
+
 protected:
     void closeEvent(QCloseEvent *event);
 
@@ -47,6 +55,7 @@ private:
     void showSettings();
     void showError(QString err);
     void loadSettings();
+    void openSelectedItem();
 
     SettingsDialog *settingsDialog;
 
