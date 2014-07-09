@@ -103,21 +103,24 @@ void MainWindow::filterSearch()
 {
     QStringList terms = ui->searchBox->text().split(" ", QString::SkipEmptyParts);
 
+    // All terms must match any field.
+
     for (int row = 0; row < ui->tableWidget->rowCount(); row += 1) {
-        bool hide = true;
-        for (int col = 0; col < ui->tableWidget->columnCount(); col += 1) {
-            QTableWidgetItem *item = ui->tableWidget->item(row, col);
-            if (!item) continue;
-            QString value = item->text();
-            bool match = true;
-            foreach (QString term, terms) {
-                if (value.indexOf(term, 0, Qt::CaseInsensitive) == -1) {
-                    match = false;
+        bool hide = false;
+
+        foreach (QString term, terms) {
+            bool match = false;
+            for (int col = 0; col < ui->tableWidget->columnCount(); col += 1) {
+                QTableWidgetItem *item = ui->tableWidget->item(row, col);
+                if (!item) continue;
+                QString value = item->text();
+                if (value.indexOf(term, 0, Qt::CaseInsensitive) != -1) {
+                    match = true;
                     break;
                 }
             }
-            if (match) {
-                hide = false;
+            if (!match) {
+                hide = true;
                 break;
             }
         }
