@@ -4,7 +4,7 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    a.setApplicationVersion(QString("0.0.2"));
+    a.setApplicationVersion(QString("0.0.3"));
     MainWindow w;
     w.show();
 
