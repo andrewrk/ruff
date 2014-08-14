@@ -70,7 +70,7 @@ Use [mxe](http://mxe.cc/).
 git clone https://github.com/mxe/mxe.git
 cd mxe
 make qt5
-mkdir build-win
+mkdir /your/project/build-win && cd /your/project/build-win
 /path/to/mxe/usr/i686-pc-mingw32/qt5/bin/qmake /path/to/ruff/ruff.pro
 make
 /path/to/mxe/usr/i686-pc-mingw32/bin/strip release/ruff.exe
